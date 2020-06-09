@@ -36,7 +36,7 @@ namespace DiscordAnnouncer
 
 		public override Version Version
 		{
-			get { return new Version(1, 0, 0, 0); }
+			get { return new Version(1, 0, 1, 0); }
 		}
 
 		public AnnouncerPlugin(Main game) : base(game)
@@ -97,7 +97,7 @@ namespace DiscordAnnouncer
 
 			messageModel.content = $"Player: \"{TShock.Players[args.Who].Name}\" has connected to the server. {TShock.Utils.GetActivePlayerCount() + 1}/16 players online.";
 
-			CreateMessage(messageModel, botInfo.ChannelID);
+			Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
 		}
 
 		void OnPlayerLeave(LeaveEventArgs args)
@@ -109,7 +109,7 @@ namespace DiscordAnnouncer
 			{
 				messageModel.content = $"Player: \"{TShock.Players[args.Who].Name}\" has disconnected from the server. {TShock.Utils.GetActivePlayerCount() - 1}/16 players online.";
 
-				CreateMessage(messageModel, botInfo.ChannelID);
+				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
 			}
 		}
 
@@ -122,11 +122,11 @@ namespace DiscordAnnouncer
 			{
 				messageModel.content = $"Server Message: {args.Message}";
 
-				CreateMessage(messageModel, botInfo.ChannelID);
+				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
 			}
 		}
 
-		public void CreateMessage(MessageModel message, long channelID)
+		public async Task CreateMessage(MessageModel message, long channelID)
 		{
 			var authUrl = $"https://discordapp.com/api/channels/{channelID}/messages";
 
@@ -134,7 +134,7 @@ namespace DiscordAnnouncer
 			{
 				var postBody = JsonConvert.SerializeObject(message);
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", botInfo.BotToken);
-				httpClient.PostAsync(authUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
+				await httpClient.PostAsync(authUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
 			}
 		}
 
