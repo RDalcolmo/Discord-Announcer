@@ -61,7 +61,7 @@ namespace DiscordAnnouncer
 
 			if (!File.Exists(configPath))
 			{
-				File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
+				File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
 			}
 
 			try
@@ -146,7 +146,7 @@ namespace DiscordAnnouncer
 
 				if (!File.Exists(configPath))
 				{
-					File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
+					File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
 				}
 
 				botInfo = JsonConvert.DeserializeObject<DiscordBotModel>(File.ReadAllText(configPath));
