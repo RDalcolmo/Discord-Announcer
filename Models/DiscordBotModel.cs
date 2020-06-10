@@ -9,7 +9,7 @@ namespace DiscordAnnouncer.Models
 	class DiscordBotModel
 	{
 		public bool EnableAnnouncer { get; set; }
-		public string BotToken { get; set; }
-		public long ChannelID { get; set; }
+		public string WebhookToken { get; set; }
+		public long WebhookID { get; set; }
 	}
 }

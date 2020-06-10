@@ -36,7 +36,7 @@ namespace DiscordAnnouncer
 
 		public override Version Version
 		{
-			get { return new Version(1, 0, 1, 0); }
+			get { return new Version(1, 1, 0, 0); }
 		}
 
 		public AnnouncerPlugin(Main game) : base(game)
@@ -49,7 +49,6 @@ namespace DiscordAnnouncer
 			messageModel = new MessageModel()
 			{
 				content = "",
-				tts = false
 			};
 
 			Commands.ChatCommands.Add(new Command("config.reload.permission", OnReloadConfig, "reloadconfig", "rcfg")
@@ -61,7 +60,7 @@ namespace DiscordAnnouncer
 
 			if (!File.Exists(configPath))
 			{
-				File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
+				File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, WebhookToken = "TOKEN_HERE", WebhookID = 0 }, Formatting.Indented));
 			}
 
 			try
@@ -97,7 +96,7 @@ namespace DiscordAnnouncer
 
 			messageModel.content = $"Player: \"{TShock.Players[args.Who].Name}\" has connected to the server. {TShock.Utils.GetActivePlayerCount() + 1}/16 players online.";
 
-			Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
+			Task.Run(async ()=> await CreateMessage(messageModel, botInfo.WebhookID, botInfo.WebhookToken));
 		}
 
 		void OnPlayerLeave(LeaveEventArgs args)
@@ -109,7 +108,7 @@ namespace DiscordAnnouncer
 			{
 				messageModel.content = $"Player: \"{TShock.Players[args.Who].Name}\" has disconnected from the server. {TShock.Utils.GetActivePlayerCount() - 1}/16 players online.";
 
-				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
+				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.WebhookID, botInfo.WebhookToken));
 			}
 		}
 
@@ -122,18 +121,17 @@ namespace DiscordAnnouncer
 			{
 				messageModel.content = $"Server Message: {args.Message}";
 
-				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.ChannelID));
+				Task.Run(async ()=> await CreateMessage(messageModel, botInfo.WebhookID, botInfo.WebhookToken));
 			}
 		}
 
-		public async Task CreateMessage(MessageModel message, long channelID)
+		public async Task CreateMessage(MessageModel message, long webhookID, string webhookToken)
 		{
-			var authUrl = $"https://discordapp.com/api/channels/{channelID}/messages";
+			var authUrl = $"https://discordapp.com/api/webhooks/{webhookID}/{webhookToken}";
 
 			using (var httpClient = new HttpClient())
 			{
 				var postBody = JsonConvert.SerializeObject(message);
-				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", botInfo.BotToken);
 				await httpClient.PostAsync(authUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
 			}
 		}
@@ -146,7 +144,7 @@ namespace DiscordAnnouncer
 
 				if (!File.Exists(configPath))
 				{
-					File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, BotToken = "TOKEN_HERE", ChannelID = 0 }, Formatting.Indented));
+					File.WriteAllText(configPath, JsonConvert.SerializeObject(new DiscordBotModel() { EnableAnnouncer = true, WebhookToken = "TOKEN_HERE", WebhookID = 0 }, Formatting.Indented));
 				}
 
 				botInfo = JsonConvert.DeserializeObject<DiscordBotModel>(File.ReadAllText(configPath));
