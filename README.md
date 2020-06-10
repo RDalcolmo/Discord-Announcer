@@ -5,8 +5,8 @@ How to use: Copy the DiscordAnnouncer.dll into your "ServerPlugins" folder. Star
 
 Inside that file there will be 3 fields:
 EnableAnnouncer - true/false if you want the bot to enable or disable the plugin.
-BotToken - Your bot token. Your bot must be running separately in order for messages to post.
-ChannelID - Copy the Discord channel ID (The bot must have access to that channel) of the channel you want the bot to post messages to.
+WebhookToken - Copy your webhook token.
+WebhookID - Copy your webhook ID.
 
 Currently the following messages will be posted on Discord:
 - A player connected/Disconnected from the server.
